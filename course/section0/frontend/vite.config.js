@@ -12,11 +12,21 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
+      "@assets": fileURLToPath(new URL("./src/assets", import.meta.url)),
+    },
+  },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        additionalData: `
+          @import "@assets/scss/app.scss";
+        `,
+      },
     },
   },
   server: {
     host: true,
-    port: 8080,
+    port: 8082,
     proxy: {
       "/api": {
         target: "http://backend:3000/",

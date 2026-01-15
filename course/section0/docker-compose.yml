@@ -26,12 +26,12 @@ services:
     build:
       context: ./frontend
 #    https://github: com/vitejs/vite/issues/2671#issuecomment-829535806:
-    command: sh -c "npm rebuild esbuild && npm run dev"
+    command: sh -c "npm install && npm rebuild esbuild && npm run dev"
     environment:
-      PORT: '8080'
+      PORT: '8082'
       HOST: '0.0.0.0'
     ports:
-      - '8080:8080'
+      - '8082:8082'
     volumes:
       - ./frontend:/frontend
       - /frontend/node_modules

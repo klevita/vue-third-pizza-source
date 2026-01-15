@@ -6,8 +6,8 @@ export * from './application';
 export async function main(options: ApplicationConfig = {}) {
   const app = new Application(options);
   await app.boot();
-  await app.migrateSchema();
-  await factory(app);
+  // await app.migrateSchema();
+  // await factory(app);
   await app.start();
 
   const url = app.restServer.url;
