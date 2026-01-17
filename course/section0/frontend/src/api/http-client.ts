@@ -6,7 +6,7 @@ import { useUserStore } from "@/stores/user";
 const reject = (error: AxiosError) => {
   if (error.response) {
     const { data } = error.response;
-    if (data && typeof data === 'object' && 'error' in data) {
+    if (data && typeof data === "object" && "error" in data) {
       const errorData = data as { error?: { message?: string } };
       if (errorData.error?.message) {
         toast(errorData.error.message, {

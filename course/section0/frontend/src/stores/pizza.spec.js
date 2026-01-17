@@ -73,7 +73,10 @@ describe("Pizza Store", () => {
       doughId: 1,
       sizeId: 1,
       quantity: 1,
-      ingredients: [{ id: 1, price: 50 }, { id: 2, price: 30 }],
+      ingredients: [
+        { id: 1, price: 50 },
+        { id: 2, price: 30 },
+      ],
     };
 
     const price = store.calculatePizzaPrice(pizza);

@@ -19,7 +19,11 @@ vi.mock("@/api/main-service", () => ({
     getOrders: vi.fn(() => Promise.resolve([])),
     getAdresses: vi.fn(() => Promise.resolve([])),
     whoAmI: vi.fn(() =>
-      Promise.resolve({ id: "1", name: "Test User", phone: "+7 999 999 99 99" }),
+      Promise.resolve({
+        id: "1",
+        name: "Test User",
+        phone: "+7 999 999 99 99",
+      }),
     ),
     login: vi.fn(() => Promise.resolve({ token: "test-token" })),
   },

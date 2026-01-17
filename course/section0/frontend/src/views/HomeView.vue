@@ -152,7 +152,7 @@
           <div class="content__constructor">
             <div
               class="pizza"
-              :class="foundationClassesMap[pizzaStore.currentSauce?.name]"
+              :class="foundationClassesMap[pizzaStore.currentSauce?.name || '']"
             >
               <div class="pizza__wrapper">
                 <TransitionGroup name="appear">
@@ -189,13 +189,13 @@ import { computed } from "vue";
 
 const pizzaStore = usePizzaStore();
 
-const foundationClassesMap = {
+const foundationClassesMap: Record<string, string> = {
   Томатный: "pizza--foundation--big-tomato",
   Сливочный: "pizza--foundation--big-creamy",
 };
 
 const ingredientsClasses = computed(() => {
-  const ingredientNameToClassMap = {
+  const ingredientNameToClassMap: Record<string, string> = {
     Ананас: "pizza__filling--ananas",
     Бекон: "pizza__filling--bacon",
     Чеддер: "pizza__filling--cheddar",
@@ -212,7 +212,7 @@ const ingredientsClasses = computed(() => {
     Томаты: "pizza__filling--tomatoes",
     "Блю чиз": "pizza__filling--blue_cheese",
   };
-  const ingredientsClassesMap = {
+  const ingredientsClassesMap: Record<string, number> = {
     "pizza__filling--ananas": 0,
     "pizza__filling--bacon": 0,
     "pizza__filling--blue_cheese": 0,
@@ -229,15 +229,17 @@ const ingredientsClasses = computed(() => {
     "pizza__filling--salmon": 0,
     "pizza__filling--tomatoes": 0,
   };
-  const countAddonsMap = {
+  const countAddonsMap: Record<number, string> = {
     1: "",
     2: "pizza__filling--second",
     3: "pizza__filling--third",
   };
 
-  pizzaStore.currentPizza.ingredients.forEach((ingredient: any) => {
-    const ingredientClass = ingredientNameToClassMap[ingredient.name];
-    ingredientsClassesMap[ingredientClass as any] += 1;
+  pizzaStore.currentPizza.ingredients.forEach((ingredient) => {
+    const ingredientClass = ingredientNameToClassMap[ingredient.name || ""];
+    if (ingredientClass) {
+      ingredientsClassesMap[ingredientClass] += 1;
+    }
   });
 
   const filteredIngredientsClasses = Object.entries(
@@ -252,7 +254,7 @@ const ingredientsClasses = computed(() => {
   );
 });
 
-function countIngredientsByPizza(id) {
+function countIngredientsByPizza(id: number) {
   return pizzaStore.currentPizza.ingredients.reduce(
     (acc, curr) => (curr.id === id ? acc + 1 : acc),
     0,

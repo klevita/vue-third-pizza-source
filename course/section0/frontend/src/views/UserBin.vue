@@ -25,19 +25,23 @@
                   <ul>
                     <li>
                       Диаметр:
-                      {{ pizzaStore.getPizzaSizeByName(pizza.name).name }}
+                      {{ pizzaStore.getPizzaSizeByName(pizza.name)?.name }}
                     </li>
                     <li>
                       Тесто:
-                      {{ pizzaStore.getPizzaDoughByName(pizza.name).name }}
+                      {{ pizzaStore.getPizzaDoughByName(pizza.name)?.name }}
                     </li>
                     <li>
                       Соус:
-                      {{ pizzaStore.getPizzaSauceByName(pizza.name).name }}
+                      {{ pizzaStore.getPizzaSauceByName(pizza.name)?.name }}
                     </li>
                     <li>
                       Начинка:
-                      {{ pizza.ingredients.map(({ name }: any) => name).join(", ") }}
+                      {{
+                        pizza.ingredients
+                          .map(({ name }: any) => name)
+                          .join(", ")
+                      }}
                     </li>
                   </ul>
                 </div>
@@ -232,6 +236,7 @@ import { useRouter } from "vue-router";
 import { onMounted, ref, computed } from "vue";
 import { MainService } from "@/api/main-service";
 import { toast } from "vue3-toastify";
+import type { Address, User } from "@/types/api";
 
 const PICKUP = "pickup";
 const NEW_ADDRESS = "new";
@@ -239,11 +244,11 @@ const NEW_ADDRESS = "new";
 const router = useRouter();
 const pizzaStore = usePizzaStore();
 
-const addresses = ref([]);
-const userData = ref(null);
+const addresses = ref<Address[]>([]);
+const userData = ref<User | null>(null);
 
-const selectedDeliveryType = ref(PICKUP);
-const selectedAddressId = ref(null);
+const selectedDeliveryType = ref<string>(PICKUP);
+const selectedAddressId = ref<number | null>(null);
 const phone = ref("");
 const newAddress = ref({
   name: "",
@@ -266,7 +271,7 @@ onMounted(async () => {
 
   if (addresses.value.length > 0 && !selectedAddressId.value) {
     selectedAddressId.value = addresses.value[0].id;
-    selectedDeliveryType.value = addresses.value[0].id;
+    selectedDeliveryType.value = String(addresses.value[0].id);
   }
 });
 

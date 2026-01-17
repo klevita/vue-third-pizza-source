@@ -13,7 +13,7 @@ export interface Address {
   comment: string;
 }
 
-export type CreateAddressRequest = Omit<Address, 'id'>;
+export type CreateAddressRequest = Omit<Address, "id">;
 export type UpdateAddressRequest = Address;
 
 // ----- Authentication Types -----
@@ -118,6 +118,6 @@ export interface Order {
 export interface CreateOrderRequest {
   userId: string;
   addressId: number;
-  orderPizzas: Omit<OrderPizza, 'id' | 'orderId'>[];
-  orderMisc: Omit<OrderMisc, 'id' | 'orderId'>[];
+  orderPizzas: Omit<OrderPizza, "id" | "orderId">[];
+  orderMisc: Omit<OrderMisc, "id" | "orderId">[];
 }

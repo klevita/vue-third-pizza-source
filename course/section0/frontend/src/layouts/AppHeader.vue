@@ -24,10 +24,11 @@ import { usePizzaStore } from "@/stores/pizza";
 import { useRouter } from "vue-router";
 import { ref, onMounted } from "vue";
 import { MainService } from "@/api/main-service";
+import type { User } from "@/types/api";
 
 const pizzaStore = usePizzaStore();
 const router = useRouter();
-const userData = ref(null);
+const userData = ref<User | null>(null);
 
 onMounted(async () => {
   userData.value = await MainService.whoAmI();

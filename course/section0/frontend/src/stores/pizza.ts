@@ -2,8 +2,12 @@ import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 import { MainService } from "@/api/main-service";
 import { toast } from "vue3-toastify";
-import type { Dough, Ingredient, Sauce, Size, Misc } from "@/types/api";
-import type { CurrentPizza, CurrentPizzaIngredient, MiscWithQuantity } from "@/types/stores";
+import type { Dough, Ingredient, Sauce, Size } from "@/types/api";
+import type {
+  CurrentPizza,
+  CurrentPizzaIngredient,
+  MiscWithQuantity,
+} from "@/types/stores";
 
 const makeEmptyPizza = (): CurrentPizza => ({
   name: "",

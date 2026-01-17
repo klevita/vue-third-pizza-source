@@ -105,42 +105,48 @@ import { MainService } from "@/api/main-service";
 import { usePizzaStore } from "@/stores/pizza";
 import { toast } from "vue3-toastify";
 import UserSidebar from "@/components/UserSidebar.vue";
+import type {
+  Order,
+  OrderPizza,
+  OrderMisc,
+  PizzaIngredient,
+} from "@/types/api";
 
 const router = useRouter();
 const pizzaStore = usePizzaStore();
 
-const orders = ref([]);
+const orders = ref<Order[]>([]);
 
 onMounted(async () => {
   orders.value = await MainService.getOrders();
 });
 
-function getDoughName(doughId) {
+function getDoughName(doughId: number) {
   return pizzaStore.doughs.find(({ id }) => id === doughId)?.name || "";
 }
 
-function getSauceName(sauceId) {
+function getSauceName(sauceId: number) {
   return pizzaStore.sauces.find(({ id }) => id === sauceId)?.name || "";
 }
 
-function getSizeName(sizeId) {
+function getSizeName(sizeId: number) {
   return pizzaStore.sizes.find(({ id }) => id === sizeId)?.name || "";
 }
 
-function getIngredientName(ingredientId) {
+function getIngredientName(ingredientId: number) {
   return (
     pizzaStore.ingridients.find(({ id }) => id === ingredientId)?.name || ""
   );
 }
 
-function getMiscItem(miscId) {
+function getMiscItem(miscId: number) {
   return pizzaStore.misc.find(({ id }) => id === miscId);
 }
 
-function calculatePizzaPrice(pizza) {
+function calculatePizzaPrice(pizza: OrderPizza) {
   const pizzaWithIngredients = {
     ...pizza,
-    ingredients: (pizza.ingredients || []).map((ing) => {
+    ingredients: (pizza.ingredients || []).map((ing: PizzaIngredient) => {
       const ingredient = pizzaStore.ingridients.find(
         ({ id }) => id === ing.ingredientId,
       );
@@ -148,16 +154,16 @@ function calculatePizzaPrice(pizza) {
     }),
   };
 
-  return pizzaStore.calculatePizzaPrice(pizzaWithIngredients);
+  return pizzaStore.calculatePizzaPrice(pizzaWithIngredients as any);
 }
 
-function calculateOrderTotal(order) {
+function calculateOrderTotal(order: Order) {
   const pizzasTotal = order.orderPizzas.reduce(
-    (acc, pizza) => acc + calculatePizzaPrice(pizza),
+    (acc: number, pizza: OrderPizza) => acc + calculatePizzaPrice(pizza),
     0,
   );
 
-  const miscTotal = order.orderMisc.reduce((acc, item) => {
+  const miscTotal = order.orderMisc.reduce((acc: number, item: OrderMisc) => {
     const miscItem = getMiscItem(item.miscId);
     return acc + (miscItem?.price || 0) * item.quantity;
   }, 0);
@@ -165,13 +171,13 @@ function calculateOrderTotal(order) {
   return pizzasTotal + miscTotal;
 }
 
-async function deleteOrder(orderId) {
+async function deleteOrder(orderId: number) {
   await MainService.deleteOrder(orderId);
   orders.value = orders.value.filter((order) => order.id !== orderId);
   toast("Заказ удален", { type: "success" });
 }
 
-function repeatOrder(order) {
+function repeatOrder(order: Order) {
   for (const pizza of order.orderPizzas) {
     const pizzaData = {
       name: pizza.name,
@@ -179,7 +185,7 @@ function repeatOrder(order) {
       doughId: pizza.doughId,
       sizeId: pizza.sizeId,
       quantity: pizza.quantity,
-      ingredients: pizza.ingredients.map((ing) => {
+      ingredients: pizza.ingredients.map((ing: PizzaIngredient) => {
         const ingredient = pizzaStore.ingridients.find(
           ({ id }) => id === ing.ingredientId,
         );
@@ -202,7 +208,7 @@ function repeatOrder(order) {
   router.push({ name: "Bin" });
 }
 
-function formatAddress(order) {
+function formatAddress(order: Order) {
   if (!order.orderAddress) {
     return "Самовывоз";
   }
@@ -210,9 +216,9 @@ function formatAddress(order) {
   return addr.name || `${addr.street}, д.${addr.building}, кв.${addr.flat}`;
 }
 
-function getPizzaIngredients(pizza) {
+function getPizzaIngredients(pizza: OrderPizza) {
   return (pizza.ingredients || [])
-    .map((ing) => getIngredientName(ing.ingredientId))
+    .map((ing: PizzaIngredient) => getIngredientName(ing.ingredientId))
     .join(", ");
 }
 </script>

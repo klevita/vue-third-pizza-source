@@ -234,10 +234,20 @@ import { ref, onMounted } from "vue";
 import { MainService } from "@/api/main-service";
 import { toast } from "vue3-toastify";
 import UserSidebar from "@/components/UserSidebar.vue";
+import type { Address, User } from "@/types/api";
 
-const userData = ref(null);
-const addresses = ref([]);
-const editingAddressId = ref(null);
+interface EditingAddress {
+  id: number | null;
+  name: string;
+  street: string;
+  building: string;
+  flat: string;
+  comment: string;
+}
+
+const userData = ref<User | null>(null);
+const addresses = ref<Address[]>([]);
+const editingAddressId = ref<number | null>(null);
 const showNewAddressForm = ref(false);
 
 const newAddress = ref({
@@ -248,7 +258,7 @@ const newAddress = ref({
   comment: "",
 });
 
-const editingAddress = ref({
+const editingAddress = ref<EditingAddress>({
   id: null,
   name: "",
   street: "",
@@ -262,7 +272,7 @@ onMounted(async () => {
   addresses.value = await MainService.getAdresses();
 });
 
-function startEditAddress(address) {
+function startEditAddress(address: Address) {
   editingAddressId.value = address.id;
   editingAddress.value = { ...address };
 }
@@ -291,7 +301,7 @@ async function saveAddress() {
   toast("Адрес сохранен", { type: "success" });
 }
 
-async function deleteAddress(id) {
+async function deleteAddress(id: number) {
   await MainService.deleteAdress(id);
   addresses.value = addresses.value.filter((addr) => addr.id !== id);
   toast("Адрес удален", { type: "success" });
@@ -327,14 +337,14 @@ async function addNewAddress() {
 
   await MainService.addAdress({
     ...newAddress.value,
-    userId: userData.value?.id,
+    userId: userData.value?.id || "",
   });
   addresses.value = await MainService.getAdresses();
   cancelNewAddress();
   toast("Адрес добавлен", { type: "success" });
 }
 
-function formatAddressShort(address) {
+function formatAddressShort(address: Address) {
   return `${address.street}, д. ${address.building}${
     address.flat ? `, кв. ${address.flat}` : ""
   }`;

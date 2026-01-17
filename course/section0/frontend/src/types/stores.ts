@@ -1,4 +1,4 @@
-import type { Dough, Ingredient, Sauce, Size, Misc } from './api';
+import type { Misc } from "./api";
 
 // ----- Pizza Store Types -----
 export interface CurrentPizzaIngredient {
@@ -7,6 +7,7 @@ export interface CurrentPizzaIngredient {
   ingredientId: number;
   quantity: number;
   price?: number; // Added by store logic
+  name?: string; // Used for display in constructor
 }
 
 export interface CurrentPizza {
