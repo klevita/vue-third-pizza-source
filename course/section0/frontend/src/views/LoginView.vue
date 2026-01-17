@@ -33,7 +33,7 @@
     </form>
   </div>
 </template>
-<script setup>
+<script setup lang="ts">
 import { MainService } from "@/api/main-service";
 import { reactive } from "vue";
 import { useUserStore } from "@/stores/user";
@@ -49,7 +49,7 @@ const form = reactive({
   password: "",
 });
 
-function validateForm() {
+function validateForm(): boolean | undefined {
   const commonEmailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   if (!commonEmailRegex.test(form.email)) {

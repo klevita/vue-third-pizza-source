@@ -18,7 +18,7 @@
     </div>
   </header>
 </template>
-<script setup>
+<script setup lang="ts">
 import logo from "@assets/img/logo.svg";
 import { usePizzaStore } from "@/stores/pizza";
 import { useRouter } from "vue-router";

@@ -2,26 +2,21 @@ import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 import { MainService } from "@/api/main-service";
 import { toast } from "vue3-toastify";
+import type { Dough, Ingredient, Sauce, Size, Misc } from "@/types/api";
+import type { CurrentPizza, CurrentPizzaIngredient, MiscWithQuantity } from "@/types/stores";
 
-const makeEmptyPizza = () => ({
+const makeEmptyPizza = (): CurrentPizza => ({
   name: "",
   sauceId: 0,
   doughId: 0,
   sizeId: 0,
   quantity: 1,
   orderId: 0,
-  ingredients: [
-    // {
-    //   id: 0,
-    //   pizzaId: 0,
-    //   ingredientId: 0,
-    //   quantity: 0,
-    // },
-  ],
+  ingredients: [],
 });
 
 export const usePizzaStore = defineStore("pizza-store", () => {
-  const currentPizza = ref(makeEmptyPizza());
+  const currentPizza = ref<CurrentPizza>(makeEmptyPizza());
   const currentPrice = computed(() => calculatePizzaPrice(currentPizza.value));
   const currentFullPrice = computed(() => {
     const dopsPrice = selectedMisc.value.reduce(
@@ -38,18 +33,18 @@ export const usePizzaStore = defineStore("pizza-store", () => {
     sauces.value.find(({ id }) => id === currentPizza.value.sauceId),
   );
 
-  const pizzas = ref([]);
-  const selectedMisc = ref([]);
+  const pizzas = ref<CurrentPizza[]>([]);
+  const selectedMisc = ref<MiscWithQuantity[]>([]);
 
-  const sauces = ref([]);
-  const doughs = ref([]);
-  const sizes = ref([]);
-  const ingridients = ref([]);
-  const misc = ref([]);
+  const sauces = ref<Sauce[]>([]);
+  const doughs = ref<Dough[]>([]);
+  const sizes = ref<Size[]>([]);
+  const ingridients = ref<Ingredient[]>([]);
+  const misc = ref<MiscWithQuantity[]>([]);
 
   fetchPizzaData();
 
-  function calculatePizzaPrice(pizza) {
+  function calculatePizzaPrice(pizza: CurrentPizza): number {
     const saucePrice =
       sauces.value.find(({ id }) => id === pizza.sauceId)?.price || 0;
     const doughPrice =
@@ -57,7 +52,7 @@ export const usePizzaStore = defineStore("pizza-store", () => {
     const sizeMult =
       sizes.value.find(({ id }) => id === pizza.sizeId)?.multiplier || 0;
     const ingredientsPrice = pizza.ingredients.reduce(
-      (acc, ingredient) => acc + ingredient.price,
+      (acc, ingredient) => acc + (ingredient.price || 0),
       0,
     );
 
@@ -66,7 +61,7 @@ export const usePizzaStore = defineStore("pizza-store", () => {
     );
   }
 
-  function removeIngredientById(_id) {
+  function removeIngredientById(_id: number) {
     const index = currentPizza.value.ingredients.findIndex(
       ({ id }) => id === _id,
     );
@@ -88,7 +83,7 @@ export const usePizzaStore = defineStore("pizza-store", () => {
     doughs.value = doughsResp;
     ingridients.value = ingridientsResp;
     sauces.value = saucesResp;
-    sizes.value = sizesResp.toSorted(
+    sizes.value = [...sizesResp].sort(
       ({ name: name1 }, { name: name2 }) => parseInt(name1) - parseInt(name2),
     );
     misc.value = miscResp.map((item) => ({ ...item, quantity: 0 }));
@@ -107,7 +102,7 @@ export const usePizzaStore = defineStore("pizza-store", () => {
     }
   }
 
-  function addIngredient(ingredient) {
+  function addIngredient(ingredient: CurrentPizzaIngredient) {
     currentPizza.value.ingredients.push(ingredient);
   }
 
@@ -121,40 +116,44 @@ export const usePizzaStore = defineStore("pizza-store", () => {
     setIds();
   }
 
-  function removePizzaFromBinByName(name_) {
+  function removePizzaFromBinByName(name_: string) {
     const pizzaIndex = pizzas.value.findIndex(({ name }) => name === name_);
     pizzas.value.splice(pizzaIndex, 1);
   }
 
-  function getPizzaSauceByName(name_) {
+  function getPizzaSauceByName(name_: string): Sauce | undefined {
     const sauceId = pizzas.value.find(({ name }) => name === name_)?.sauceId;
     if (sauceId) {
       return sauces.value.find(({ id }) => id === sauceId);
     }
   }
-  function getPizzaDoughByName(name_) {
+
+  function getPizzaDoughByName(name_: string): Dough | undefined {
     const doughId = pizzas.value.find(({ name }) => name === name_)?.doughId;
     if (doughId) {
       return doughs.value.find(({ id }) => id === doughId);
     }
   }
-  function getPizzaSizeByName(name_) {
+
+  function getPizzaSizeByName(name_: string): Size | undefined {
     const sizeId = pizzas.value.find(({ name }) => name === name_)?.sizeId;
     if (sizeId) {
       return sizes.value.find(({ id }) => id === sizeId);
     }
   }
 
-  function decrementPizzaByName(name_) {
+  function decrementPizzaByName(name_: string) {
     const pizza = pizzas.value.find(({ name }) => name === name_);
-    if (pizza.quantity === 0) {
+    if (pizza && pizza.quantity === 0) {
       removePizzaFromBinByName(pizza.name);
       return;
     }
-    pizza.quantity -= 1;
+    if (pizza) {
+      pizza.quantity -= 1;
+    }
   }
 
-  function pushMisc(miscItem_) {
+  function pushMisc(miscItem_: MiscWithQuantity) {
     const foundMiscItem = selectedMisc.value.find(
       (miscItem) => miscItem.id === miscItem_.id,
     );
@@ -165,7 +164,8 @@ export const usePizzaStore = defineStore("pizza-store", () => {
     miscItem_.quantity += 1;
     selectedMisc.value.push(miscItem_);
   }
-  function removeMisc(miscItem_) {
+
+  function removeMisc(miscItem_: MiscWithQuantity) {
     const foundMiscItem = selectedMisc.value.find(
       (miscItem) => miscItem.id === miscItem_.id,
     );
@@ -173,7 +173,8 @@ export const usePizzaStore = defineStore("pizza-store", () => {
       foundMiscItem.quantity -= 1;
     }
   }
-  function countMisc(miscItem_) {
+
+  function countMisc(miscItem_: MiscWithQuantity): number {
     const foundMiscItem = selectedMisc.value.find(
       (miscItem) => miscItem.id === miscItem_.id,
     );

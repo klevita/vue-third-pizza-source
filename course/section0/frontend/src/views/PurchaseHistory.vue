@@ -98,7 +98,7 @@
     </div>
   </div>
 </template>
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { MainService } from "@/api/main-service";
@@ -186,7 +186,7 @@ function repeatOrder(order) {
         return ingredient;
       }),
     };
-    pizzaStore.pizzas.push(pizzaData);
+    pizzaStore.pizzas.push(pizzaData as any);
   }
 
   for (const item of order.orderMisc) {

@@ -229,7 +229,7 @@
     </div>
   </div>
 </template>
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { MainService } from "@/api/main-service";
 import { toast } from "vue3-toastify";
@@ -285,7 +285,7 @@ async function saveAddress() {
     return;
   }
 
-  await MainService.changeAdress(editingAddress.value);
+  await MainService.changeAdress(editingAddress.value as any);
   addresses.value = await MainService.getAdresses();
   cancelEdit();
   toast("Адрес сохранен", { type: "success" });

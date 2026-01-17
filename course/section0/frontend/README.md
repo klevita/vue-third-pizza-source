@@ -33,3 +33,5 @@ npm run test:unit
 ```sh
 npm run lint
 ```
+
+### Почти полностью на TS, даже не везде any

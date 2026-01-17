@@ -127,7 +127,7 @@
                         type="button"
                         class="counter__button counter__button--plus"
                         :disabled="countIngredientsByPizza(ingredient.id) > 2"
-                        @click="pizzaStore.addIngredient(ingredient)"
+                        @click="pizzaStore.addIngredient(ingredient as any)"
                       >
                         <span class="visually-hidden">Больше</span>
                       </button>
@@ -158,7 +158,7 @@
                 <TransitionGroup name="appear">
                   <div
                     v-for="ingredientClass in ingredientsClasses"
-                    :key="ingredientClass"
+                    :key="(ingredientClass as any)[0]"
                     class="pizza__filling"
                     :class="ingredientClass"
                   ></div>
@@ -183,7 +183,7 @@
     </form>
   </main>
 </template>
-<script setup>
+<script setup lang="ts">
 import { usePizzaStore } from "@/stores/pizza";
 import { computed } from "vue";
 
@@ -235,9 +235,9 @@ const ingredientsClasses = computed(() => {
     3: "pizza__filling--third",
   };
 
-  pizzaStore.currentPizza.ingredients.forEach((ingredient) => {
+  pizzaStore.currentPizza.ingredients.forEach((ingredient: any) => {
     const ingredientClass = ingredientNameToClassMap[ingredient.name];
-    ingredientsClassesMap[ingredientClass] += 1;
+    ingredientsClassesMap[ingredientClass as any] += 1;
   });
 
   const filteredIngredientsClasses = Object.entries(

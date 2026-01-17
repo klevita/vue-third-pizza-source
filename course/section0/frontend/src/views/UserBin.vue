@@ -37,7 +37,7 @@
                     </li>
                     <li>
                       Начинка:
-                      {{ pizza.ingredients.map(({ name }) => name).join(", ") }}
+                      {{ pizza.ingredients.map(({ name }: any) => name).join(", ") }}
                     </li>
                   </ul>
                 </div>
@@ -226,7 +226,7 @@
     </section>
   </form>
 </template>
-<script setup>
+<script setup lang="ts">
 import { usePizzaStore } from "@/stores/pizza";
 import { useRouter } from "vue-router";
 import { onMounted, ref, computed } from "vue";
@@ -345,10 +345,10 @@ async function handleSubmit() {
   };
 
   if (address) {
-    orderData.address = address;
+    (orderData as any).address = address;
   }
 
-  await MainService.createOrder(orderData);
+  await MainService.createOrder(orderData as any);
 
   toast("Заказ успешно оформлен!", { type: "success" });
 
